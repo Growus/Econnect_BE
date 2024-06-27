@@ -1,4 +1,4 @@
 package com.growus.econnect.service;
 
-public class PlantService {
+public interface PlantService {
 }
