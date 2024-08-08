@@ -16,7 +16,6 @@ import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
