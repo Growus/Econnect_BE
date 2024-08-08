@@ -5,7 +5,7 @@ import com.growus.econnect.entity.User;
 import jakarta.mail.MessagingException;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Optional;
+import com.growus.econnect.dto.user.SignUpRequestDTO;
 
 public interface UserService {
     User loadUserByUsername(String email);
