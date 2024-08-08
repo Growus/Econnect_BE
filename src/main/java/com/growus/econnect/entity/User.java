@@ -21,9 +21,9 @@ public class User {
     private String nickname;
 
     @Column(nullable = false, length = 50)
-    private String id;
+    private String email;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
