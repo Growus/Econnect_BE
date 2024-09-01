@@ -15,6 +15,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.growus.econnect.base.common.UserAuthorizationUtil.getCurrentUserId;
+
 @Service
 public class PlantTypeService {
 
@@ -26,6 +28,8 @@ public class PlantTypeService {
 
     @Value("${openapi.speclmanage.url}")
     private String speclmanageUrl;
+
+    Long userId = getCurrentUserId();
 
     public List<PlantTypeDTO> getPlantTypes(int pageNo, int numOfRows) {
         try {
