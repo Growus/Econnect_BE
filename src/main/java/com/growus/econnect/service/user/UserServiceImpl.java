@@ -9,6 +9,7 @@ import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final MailService mailService;
     private final RedisService redisService;
     private final JwtProvider jwtProvider;
@@ -43,7 +44,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .email(requestDTO.getEmail())
                 .nickname(requestDTO.getNickName())
-                .password(bCryptPasswordEncoder.encode(requestDTO.getPassword()))
+                .password(passwordEncoder.encode(requestDTO.getPassword()))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -62,11 +63,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void findPassword(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("이메일로 사용자를 찾을 수 없습니다: " + email));
+
+        // 새 비밀번호로 업데이트
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user); // 변경된 정보를 데이터베이스에 저장
+    }
+
+    @Override
     public LoginResponseDTO loginUser(LoginRequestDTO requestDTO) {
         User user = userRepository.findByEmail(requestDTO.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        if (bCryptPasswordEncoder.matches(requestDTO.getPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(requestDTO.getPassword(), user.getPassword())) {
             String token = jwtProvider.generateJwtToken(user.getUserId(), 3600000);
 
             LoginResponseDTO userDto = new LoginResponseDTO();

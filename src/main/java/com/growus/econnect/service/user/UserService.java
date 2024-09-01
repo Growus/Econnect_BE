@@ -12,6 +12,7 @@ public interface UserService {
     Long signUpUser(SignUpRequestDTO requestDTO);
     boolean isEmailDuplicate(String email);
     boolean isNicknameDuplicate(String nickname);
+    void findPassword(String email, String password);
     LoginResponseDTO loginUser(LoginRequestDTO requestDTO);
     void sendAuthenticationCode(String email) throws MessagingException, UnsupportedEncodingException;
     void emailAuthentication(String email, String code);

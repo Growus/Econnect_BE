@@ -18,6 +18,7 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_LOGIN(HttpStatus.OK, "USER2001","로그인을 성공했습니다."),
     SUCCESS_SEND_EMAIL(HttpStatus.OK, "USER2002","인증 번호 전송에 성공했습니다."),
     SUCCESS_CHECK_CODE(HttpStatus.OK, "USER2003","인증 번호 확인에 성공했습니다."),
+    SUCCESS_FIND_PASSWORD(HttpStatus.OK, "USER2004","비밀번호 변경에 성공했습니다."),
     SUCCESS_GET_MYPAGE(HttpStatus.OK, "MYPAGE2000","마이페이지 조회에 성공했습니다."),
     SUCCESS_UPDATE_USER_INFO(HttpStatus.OK, "MYPAGE2001","회원 정보 수정에 성공했습니다."),
     SUCCESS_UPDATE_PASSWORD(HttpStatus.OK, "MYPAGE2002","비밀번호 변경에 성공했습니다.");
