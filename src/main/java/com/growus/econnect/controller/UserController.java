@@ -47,8 +47,8 @@ public class UserController {
     }
 
     @PostMapping("/find-pw")
-    public ApiResponse<?> findPassword(@RequestParam String email, String password) {
-        userService.findPassword(email, password);
-        return ApiResponse.onSuccess(SuccessStatus.SUCCESS_FIND_PASSWORD, email);
+    public ApiResponse<?> findPassword(@RequestBody LoginRequestDTO loginRequestDTO) {
+        userService.findPassword(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
+        return ApiResponse.onSuccess(SuccessStatus.SUCCESS_FIND_PASSWORD, loginRequestDTO.getEmail());
     }
 }
