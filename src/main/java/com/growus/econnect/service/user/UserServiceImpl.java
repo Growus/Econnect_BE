@@ -1,4 +1,4 @@
-package com.growus.econnect.service;
+package com.growus.econnect.service.user;
 
 import com.growus.econnect.base.config.RedisEmailAuthentication;
 import com.growus.econnect.base.jwt.JwtProvider;
@@ -8,7 +8,6 @@ import com.growus.econnect.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.growus.econnect.service;
+package com.growus.econnect.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;

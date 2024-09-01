@@ -1,4 +1,4 @@
-package com.growus.econnect.service;
+package com.growus.econnect.service.user;
 
 import com.growus.econnect.dto.user.MyPageResponseDTO;
 import com.growus.econnect.entity.User;

@@ -3,7 +3,7 @@ package com.growus.econnect.controller;
 import com.growus.econnect.base.apiResponse.ApiResponse;
 import com.growus.econnect.base.apiResponse.code.status.SuccessStatus;
 import com.growus.econnect.dto.user.MyPageResponseDTO;
-import com.growus.econnect.service.MyPageService;
+import com.growus.econnect.service.user.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
