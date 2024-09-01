@@ -3,10 +3,12 @@ package com.growus.econnect.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -26,6 +28,12 @@ public class Plant {
 
     @Column(nullable = false, length = 50)
     private String type;
+
+    @Column(nullable = false, length = 50)
+    private String cntntsNo;
+
+    @Column(nullable = false)
+    private String speclmanageInfo;
 
     @Column(nullable = false)
     private LocalDateTime dDay;
