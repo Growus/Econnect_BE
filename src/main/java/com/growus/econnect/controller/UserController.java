@@ -45,4 +45,10 @@ public class UserController {
         userService.emailAuthentication(email, code);
         return ApiResponse.onSuccess(SuccessStatus.SUCCESS_CHECK_CODE, email);
     }
+
+    @PostMapping("/find-pw")
+    public ApiResponse<?> findPassword(@RequestParam String email, String password) {
+        userService.findPassword(email, password);
+        return ApiResponse.onSuccess(SuccessStatus.SUCCESS_FIND_PASSWORD, email);
+    }
 }
