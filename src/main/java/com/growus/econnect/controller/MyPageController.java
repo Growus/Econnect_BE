@@ -14,7 +14,7 @@ public class MyPageController {
     private final MyPageService mypageService;
 
     @GetMapping("/")
-    public ApiResponse<?> signUp() {
+    public ApiResponse<?> getMyPage() {
         MyPageResponseDTO user = mypageService.getUser();
         return ApiResponse.onSuccess(SuccessStatus.SUCCESS_SIGNUP, user);
     }
