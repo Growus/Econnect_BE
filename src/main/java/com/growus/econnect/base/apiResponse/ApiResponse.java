@@ -29,6 +29,6 @@ public class ApiResponse<T> {
 
     // 실패한 경우 응답 생성
     public static <T> ApiResponse<T> onFailure(BaseErrorCode code, T data){
-        return new ApiResponse<>(true,code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), data);
+        return new ApiResponse<>(false,code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), data);
     }
 }

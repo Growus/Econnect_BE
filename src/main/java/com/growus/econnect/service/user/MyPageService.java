@@ -7,4 +7,6 @@ public interface MyPageService {
     MyPageResponseDTO getUser();
 
     MyPageResponseDTO updateUserInfo(MultipartFile profileImage, String nickname, String message);
+
+    Long updatePassword(String currentPassword, String newPassword);
 }

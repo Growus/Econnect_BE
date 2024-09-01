@@ -1,10 +1,14 @@
 package com.growus.econnect.service.user;
 
+import com.growus.econnect.base.apiResponse.code.status.ErrorStatus;
+import com.growus.econnect.base.apiResponse.exception.InvalidPasswordException;
 import com.growus.econnect.dto.user.MyPageResponseDTO;
 import com.growus.econnect.entity.User;
 import com.growus.econnect.repository.UserRepository;
 import com.growus.econnect.service.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +21,7 @@ import static com.growus.econnect.base.common.UserAuthorizationUtil.getCurrentUs
 public class MyPageServiceImpl implements MyPageService {
     private final UserRepository userRepository;
     private final S3Uploader s3Uploader;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public MyPageResponseDTO getUser() {
@@ -67,6 +72,24 @@ public class MyPageServiceImpl implements MyPageService {
                 .nickname(user.getNickname())
                 .stateMessage(user.getStateMessage())
                 .build();
+    }
+
+    @Override
+    public Long updatePassword(String currentPassword, String newPassword) {
+        Long userId = getCurrentUserId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다. userId: " + userId));
+
+        // 현재 비밀번호 확인
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new InvalidPasswordException(ErrorStatus.INVALID_CURRENT_PASSWORD.getCode());
+        }
+
+        // 새 비밀번호로 업데이트
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user); // 변경된 정보를 데이터베이스에 저장
+
+        return userId;
     }
 
 }
