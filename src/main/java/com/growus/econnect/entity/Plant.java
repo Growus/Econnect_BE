@@ -32,30 +32,30 @@ public class Plant {
     @Column(nullable = false, length = 50)
     private String cntntsNo;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String speclmanageInfo;
 
     @Column(nullable = false)
     private LocalDateTime dDay;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String image;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private boolean representative;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private float solidHumidity;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private float airHumidity;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private float temperature;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private PlantStatus status;
 
     @Column(nullable = false)

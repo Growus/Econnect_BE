@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddArticleRequestDTO {
-    private Long userId;
     private String name;
     private String type;
     private LocalDateTime dDay;
