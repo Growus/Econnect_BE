@@ -17,4 +17,5 @@ public interface PlantService {
     String storeFile(MultipartFile file);
     void deletePlant(Long id, Long userId);
     ArticleResponseDTO updatePlant(Long id, Long userId, UpdateArticleRequestDTO updateArticleRequestDTO);
+    void setRepresentative(Long plantId, Long userId);
 }

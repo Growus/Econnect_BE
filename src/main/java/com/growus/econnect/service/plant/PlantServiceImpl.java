@@ -2,6 +2,7 @@ package com.growus.econnect.service.plant;
 
 import com.growus.econnect.dto.plant.AddArticleRequestDTO;
 import com.growus.econnect.dto.plant.ArticleResponseDTO;
+import com.growus.econnect.dto.plant.PlantTypeDTO;
 import com.growus.econnect.dto.plant.UpdateArticleRequestDTO;
 import com.growus.econnect.entity.Plant;
 import com.growus.econnect.entity.PlantStatus;
@@ -13,10 +14,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,9 +36,16 @@ public class PlantServiceImpl implements PlantService {
 
     private final PlantRepository plantRepository;
     private final UserRepository userRepository;
+    private final PlantTypeService plantTypeService;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
+
+    @Value("${openapi.api.key}")
+    private String apiKey;
+
+    @Value("${openapi.api.url}")
+    private String apiUrl;
 
 
     // 식물 등록
@@ -50,10 +66,14 @@ public class PlantServiceImpl implements PlantService {
             imagePath = storeFile(addArticleRequestDTO.getImageFile());
         }
 
+        // Fetching cntntsNo based on the selected type
+        String cntntsNo = addArticleRequestDTO.getCntntsNo();
+
         Plant plant = Plant.builder()
                 .user(user)
                 .name(addArticleRequestDTO.getName())
                 .type(addArticleRequestDTO.getType())
+                .cntntsNo(addArticleRequestDTO.getCntntsNo() != null ? addArticleRequestDTO.getCntntsNo() : "zero")
                 .dDay(addArticleRequestDTO.getDDay())
                 .image(imagePath)
                 .representative(addArticleRequestDTO.getRepresentative() != null ? addArticleRequestDTO.getRepresentative() : false)
@@ -99,11 +119,22 @@ public class PlantServiceImpl implements PlantService {
     }
 
     // 식물 상세 조회
-    @Override
     public Optional<Plant> getPlantByIdAndUserId(Long id, Long userId) {
-        return plantRepository.findByIdAndUser_UserId(id, userId);
-    }
+        // 데이터베이스에서 식물 조회
+        Optional<Plant> plantOptional = plantRepository.findByIdAndUser_UserId(id, userId);
 
+        if (plantOptional.isPresent()) {
+            Plant plant = plantOptional.get();
+            // cntntsNo를 사용하여 추가 정보 가져오기
+            PlantTypeDTO plantTypeDTO = plantTypeService.getPlantTypeByCntntsNo(plant.getCntntsNo());
+
+            if (plantTypeDTO != null) {
+                plant.setSpeclmanageInfo(plantTypeDTO.getSpeclmanageInfo());
+            }
+        }
+
+        return plantOptional;
+    }
     // 식물 목록 조회
     @Override
     public List<Plant> getPlantsByUserId(Long userId) {
@@ -151,4 +182,27 @@ public class PlantServiceImpl implements PlantService {
                 new ArticleResponseDTO.PlantDetailsDTO(updatedPlant)
         );
     }
+    // 대표 식물 설정
+    @Transactional
+    @Override
+    public void setRepresentative(Long plantId, Long userId) {
+        // 1. 사용자에 해당하는 기존 대표 식물 조회
+        List<Plant> existingRepresentatives = plantRepository.findByUser_UserId(userId).stream()
+                .filter(Plant::isRepresentative) // 대표 식물 필터링
+                .toList();
+
+        // 2. 기존 대표 식물의 대표 상태를 false로 설정
+        for (Plant representative : existingRepresentatives) {
+            representative.setRepresentative(false);
+            plantRepository.save(representative);
+        }
+
+        // 3. 새로운 대표 식물의 대표 상태를 true로 설정
+        Plant newRepresentative = plantRepository.findByIdAndUser_UserId(plantId, userId)
+                .orElseThrow(() -> new RuntimeException("Plant not found or unauthorized"));
+
+        newRepresentative.setRepresentative(true);
+        plantRepository.save(newRepresentative);
+    }
+
 }

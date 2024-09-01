@@ -29,6 +29,12 @@ public class Plant {
     @Column(nullable = false, length = 50)
     private String type;
 
+    @Column(nullable = false, length = 50)
+    private String cntntsNo;
+
+    @Column(nullable = false)
+    private String speclmanageInfo;
+
     @Column(nullable = false)
     private LocalDateTime dDay;
 

@@ -28,7 +28,7 @@ public class ArticleListResponseDTO {
         private String type;
         private String image;
         private boolean representative;
-        private LocalDateTime dDay; // 남은 일수를 나타내는 필드
+        private LocalDateTime dDay;
 
         public PlantSummaryDTO(Plant plant) {
             this.id = plant.getId();

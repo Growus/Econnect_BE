@@ -17,7 +17,7 @@ import java.time.temporal.ChronoUnit;
 public class ArticleResponseDTO {
     private int statusCode;
     private String message;
-    private Object data;
+    private PlantDetailsDTO plantDetails;
 
     @Getter
     @Setter
@@ -54,11 +54,12 @@ public class ArticleResponseDTO {
             this.daysLeft = calculateDaysLeft(plant.getDDay());
         }
 
-        private long calculateDaysLeft(LocalDateTime dDay) {
+        private Long calculateDaysLeft(LocalDateTime dDay) {
             if (dDay == null) {
-                return 0;
+                return null;
             }
             return Math.abs(ChronoUnit.DAYS.between(LocalDateTime.now(), dDay));
         }
+
     }
 }

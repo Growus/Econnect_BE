@@ -24,4 +24,5 @@ public class AddArticleRequestDTO {
     private Float airHumidity;
     private Float temperature;
     private PlantStatus status;
+    private String cntntsNo;
 }

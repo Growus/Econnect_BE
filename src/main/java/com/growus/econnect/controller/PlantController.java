@@ -1,9 +1,6 @@
 package com.growus.econnect.controller;
 
-import com.growus.econnect.dto.plant.AddArticleRequestDTO;
-import com.growus.econnect.dto.plant.ArticleListResponseDTO;
-import com.growus.econnect.dto.plant.ArticleResponseDTO;
-import com.growus.econnect.dto.plant.UpdateArticleRequestDTO;
+import com.growus.econnect.dto.plant.*;
 import com.growus.econnect.entity.Plant;
 import com.growus.econnect.entity.PlantStatus;
 import com.growus.econnect.service.plant.PlantService;
@@ -38,17 +35,18 @@ public class PlantController {
             @RequestParam("name") String name,
             @RequestParam("type") String type,
             @RequestParam("dDay") LocalDate dDay,
-            @RequestParam(value = "representative", required = false) boolean representative,
+            @RequestParam(value = "representative", required = false) Boolean representative, // Boolean으로 변경
             @RequestParam(value = "solidHumidity", required = false) Float solidHumidity,
             @RequestParam(value = "airHumidity", required = false) Float airHumidity,
             @RequestParam(value = "temperature", required = false) Float temperature,
-            @RequestParam(value = "status", required = false) PlantStatus status) {
+            @RequestParam(value = "status", required = false) PlantStatus status,
+            @RequestParam(value = "cntntsNo", required = false) String cntntsNo) { // cntntsNo 추가
 
         // LocalDate를 LocalDateTime으로 변환
         LocalDateTime dDayDateTime = dDay.atStartOfDay();
 
         AddArticleRequestDTO addArticleRequestDTO = new AddArticleRequestDTO(
-                userId, name, type, dDayDateTime, file, representative, solidHumidity, airHumidity, temperature, status);
+                userId, name, type, dDayDateTime, file, representative, solidHumidity, airHumidity, temperature, status, cntntsNo);
         ArticleResponseDTO responseDTO = plantService.createPlant(addArticleRequestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
@@ -99,13 +97,14 @@ public class PlantController {
     // 사용자 식물 상세 조회 엔드포인트
     @GetMapping("/{userId}/articles/{id}")
     public ResponseEntity<ArticleResponseDTO> getPlantById(@PathVariable Long userId, @PathVariable Long id) {
-        Optional<Plant> plant = plantService.getPlantByIdAndUserId(id, userId);
+        Optional<Plant> plantOptional = plantService.getPlantByIdAndUserId(id, userId);
 
-        if (plant.isPresent()) {
+        if (plantOptional.isPresent()) {
+            // 변환 작업: Plant 객체를 PlantDetailsDTO로 변환
             ArticleResponseDTO responseDTO = new ArticleResponseDTO(
                     HttpStatus.OK.value(),
                     "Plant found",
-                    List.of(plant.get())
+                    new ArticleResponseDTO.PlantDetailsDTO(plantOptional.get())
             );
             return ResponseEntity.ok(responseDTO);
         } else {
@@ -141,10 +140,45 @@ public class PlantController {
 
     // 식물 타입 리스트를 반환하는 엔드포인트
     @GetMapping("/types")
-    public ResponseEntity<List<String>> getPlantTypes(
+    public ResponseEntity<List<PlantTypeDTO>> getPlantTypes(
             @RequestParam(name = "pageNo", defaultValue = "1") int pageNo,
             @RequestParam(name = "numOfRows", defaultValue = "10") int numOfRows) {
-        List<String> plantTypes = plantTypeService.getPlantTypes(pageNo, numOfRows);
+        List<PlantTypeDTO> plantTypes = plantTypeService.getPlantTypes(pageNo, numOfRows);
         return ResponseEntity.ok(plantTypes);
     }
+
+    @GetMapping("/types/{cntntsNo}")
+    public ResponseEntity<PlantTypeDTO> getPlantTypeByCntntsNo(@PathVariable String cntntsNo) {
+        PlantTypeDTO plantType = plantTypeService.getPlantTypeByCntntsNo(cntntsNo);
+        if (plantType != null) {
+            return ResponseEntity.ok(plantType);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // 대표 식물 설정 엔드포인트
+    @PutMapping("/{userId}/articles/{id}/representative")
+    public ResponseEntity<ArticleResponseDTO> setRepresentative(
+            @PathVariable Long userId,
+            @PathVariable Long id) {
+        try {
+            plantService.setRepresentative(id, userId);
+            ArticleResponseDTO responseDTO = new ArticleResponseDTO(
+                    HttpStatus.OK.value(),
+                    "Plant marked as representative successfully",
+                    null
+            );
+            return ResponseEntity.ok(responseDTO);
+        } catch (RuntimeException e) {
+            ArticleResponseDTO responseDTO = new ArticleResponseDTO(
+                    HttpStatus.NOT_FOUND.value(),
+                    e.getMessage(),
+                    null
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDTO);
+        }
+    }
+
+
 }
