@@ -35,7 +35,7 @@ public class MyPageController {
     public ApiResponse<?> updatePassword(@RequestBody UpdatePasswordRequestDTO updatePasswordRequestDTO) {
         try {
             Long userId = mypageService.updatePassword(updatePasswordRequestDTO.getCurrentPassword(), updatePasswordRequestDTO.getNewPassword());
-            return ApiResponse.onSuccess(SuccessStatus.SUCCESS_UPDATE_USER_INFO, userId);
+            return ApiResponse.onSuccess(SuccessStatus.SUCCESS_UPDATE_PASSWORD, userId);
         } catch (InvalidPasswordException e) {
             return ApiResponse.onFailure(ErrorStatus.INVALID_CURRENT_PASSWORD, null);
         } catch (Exception e) {
